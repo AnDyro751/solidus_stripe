@@ -2,7 +2,7 @@
 
 module Spree
   class PaymentMethod
-    class Gateway::StripeAchGateway < Spree::Gateway::Check
+    class StripeCheckout < Spree::Gateway::Check
 
       def method_type
         'stripe_checkout'

@@ -29,6 +29,7 @@ module SolidusStripe
 
     initializer "spree.payment_method.add_stripe_credit_card", after: "spree.register.payment_methods" do |app|
       app.config.spree.payment_methods << "Spree::PaymentMethod::StripeCreditCard"
+      app.config.spree.payment_methods << "Spree::PaymentMethod::StripeCheckout"
     end
   end
 end
