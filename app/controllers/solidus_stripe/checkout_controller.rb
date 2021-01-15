@@ -5,8 +5,8 @@ module SolidusStripe
     include Spree::Core::ControllerHelpers::Order
 
 
-    def create_checkout_session
-
+    def complete_order
+      current_order.complete
     end
 
   end

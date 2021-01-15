@@ -40,31 +40,57 @@ module SolidusStripe
 
     def create_payment
       Spree::OrderUpdateAttributes.new(
-        current_order,
-        payment_params,
-        request_env: request.headers.env
+          current_order,
+          payment_params,
+          request_env: request.headers.env
       ).apply
 
       created_payment = Spree::Payment.find_by(response_code: intent_id)
       created_payment&.tap { |payment| payment.update!(state: :pending) }
     end
 
+    def create_checkout
+
+      Spree::OrderUpdateAttributesDecorator.new(
+          current_order,
+          payment_checkout_params,
+          request_env: request.headers.env
+      ).apply
+      created_payment = Spree::Payment.find_by(response_code: params["checkout_id"])
+      created_payment&.tap { |payment| payment.update!(state: :pending) }
+
+    end
+
+    def payment_checkout_params
+      {
+          payments_attributes: [{
+                                    payment_method_id: stripe.id,
+                                    amount: current_order.total,
+                                    source_attributes: {
+                                        gateway_payment_profile_id: params["checkout_id"],
+                                        name: address_full_name,
+                                        address_attributes: address_attributes
+                                    }
+                                }]
+      }
+    end
+
     def payment_params
       {
-        payments_attributes: [{
-          payment_method_id: stripe.id,
-          amount: current_order.total,
-          response_code: intent_id,
-          source_attributes: {
-            month: intent_card['exp_month'],
-            year: intent_card['exp_year'],
-            cc_type: intent_card['brand'],
-            last_digits: intent_card['last4'],
-            gateway_payment_profile_id: intent_customer_profile,
-            name: card_holder_name || address_full_name,
-            address_attributes: address_attributes
-          }
-        }]
+          payments_attributes: [{
+                                    payment_method_id: stripe.id,
+                                    amount: current_order.total,
+                                    response_code: intent_id,
+                                    source_attributes: {
+                                        month: intent_card['exp_month'],
+                                        year: intent_card['exp_year'],
+                                        cc_type: intent_card['brand'],
+                                        last_digits: intent_card['last4'],
+                                        gateway_payment_profile_id: intent_customer_profile,
+                                        name: card_holder_name || address_full_name,
+                                        address_attributes: address_attributes
+                                    }
+                                }]
       }
     end
 

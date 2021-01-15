@@ -2,14 +2,10 @@
 
 module Spree
   class PaymentMethod
-    class StripeCheckout < Spree::Gateway::Check
+    class StripeCheckout < Spree::PaymentMethod::CreditCard
 
       def method_type
         'stripe_checkout'
-      end
-
-      def payment_source_class
-        Check
       end
 
       def supports?(_source)
