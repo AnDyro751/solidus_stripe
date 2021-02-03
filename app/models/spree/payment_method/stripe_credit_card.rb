@@ -53,6 +53,7 @@ module Spree
         if v3_intents?
           ActiveMerchant::Billing::StripePaymentIntentsGateway
         else
+          # Poner esto en sripe checkout
           ActiveMerchant::Billing::StripeGateway
         end
       end

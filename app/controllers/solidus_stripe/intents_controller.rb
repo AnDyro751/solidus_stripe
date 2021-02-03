@@ -23,19 +23,6 @@ module SolidusStripe
       end
     end
 
-    def create_checkout
-      create_payment_service = SolidusStripe::CreateCheckoutService.new(
-          stripe,
-          self
-      )
-      checkout_response = create_payment_service.call
-      if checkout_response.nil?
-        render json: {error: "Could not create stripe checkout", checkout_id: nil}, status: 500
-      else
-        render json: {success: true, checkout_id: checkout_response}
-      end
-    end
-
     private
 
     def stripe
